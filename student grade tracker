@@ -1,0 +1,111 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Define a struct for a single course grade
+struct CourseGrade {
+    string courseName;
+    string courseCode;
+    float grade;
+};
+
+// Define a struct for a single student
+struct Student {
+    string name;
+    int id;
+    vector<CourseGrade> courses;
+};
+
+// Define a vector to store all student records
+vector<Student> students;
+
+// Helper function to prompt user for input and return a string
+string getStringInput(string prompt) {
+    string input;
+    cout << prompt;
+    getline(cin, input);
+    return input;
+}
+
+// Helper function to prompt user for input and return an integer
+int getIntInput(string prompt) {
+    int input;
+    cout << prompt;
+    cin >> input;
+    cin.ignore(); // Ignore the newline character
+    return input;
+}
+
+// Helper function to prompt user for input and return a floating-point number
+float getFloatInput(string prompt) {
+    float input;
+    cout << prompt;
+    cin >> input;
+    cin.ignore(); // Ignore the newline character
+    return input;
+}
+
+// Helper function to add a new student record
+void addStudentRecord() {
+    Student newStudent;
+    newStudent.name = getStringInput("Enter student name: ");
+    newStudent.id = getIntInput("Enter student ID: ");
+    students.push_back(newStudent);
+    cout << "Student record added successfully!" << endl;
+}
+
+// Helper function to remove an existing student record
+void removeStudentRecord() {
+    int studentId = getIntInput("Enter student ID to remove: ");
+    auto it = find_if(students.begin(), students.end(), [studentId](const Student& s) {
+        return s.id == studentId;
+    });
+    if (it != students.end()) {
+        students.erase(it);
+        cout << "Student record removed successfully!" << endl;
+    }
+    else {
+        cout << "Student record not found!" << endl;
+    }
+}
+
+// Helper function to modify an existing student record
+void modifyStudentRecord() {
+    int studentId = getIntInput("Enter student ID to modify: ");
+    auto it = find_if(students.begin(), students.end(), [studentId](const Student& s) {
+        return s.id == studentId;
+    });
+    if (it != students.end()) {
+        Student& student = *it;
+        student.name = getStringInput("Enter student name (leave blank to keep current): ");
+        if (!student.courses.empty()) {
+            cout << "Current courses:" << endl;
+            for (const auto& course : student.courses) {
+                cout << "  " << course.courseName << " (" << course.courseCode << "): " << course.grade << endl;
+            }
+            string choice = getStringInput("Do you want to modify course grades? (y/n): ");
+            if (choice == "y" || choice == "Y") {
+                student.courses.clear();
+                int numCourses = getIntInput("Enter number of courses: ");
+                for (int i = 1; i <= numCourses; i++) {
+                    CourseGrade course;
+                    course.courseName = getStringInput("Enter course name: ");
+                    course.courseCode = getStringInput("Enter course code: ");
+                    course.grade = getFloatInput("Enter course grade: ");
+                    student.courses.push_back(course);
+                }
+            }
+        }
+        cout << "Student record modified successfully!" << endl;
+    }
+    else {
+        cout << "Student record not found!" << endl;
+    }
+}
+
+// Helper function to display a single student record
+void display
